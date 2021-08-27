@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <style>html { font-size: 14px; font-family: Arial, Helvetica, sans-serif; }</style>
+  <title> First Partial Jonathan Castillo Aguilar</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css">
+  <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.common-material.min.css" />
+  <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.material.min.css" />
+  <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.material.mobile.min.css" />
+  <link rel="stylesheet" href="https://demos.telerik.com/kendo-ui/content/shared/styles/examples-offline.css">
+</head>
+
+<body onload="main()">
+  <table>
+    <tr>
+      <td>
+        <canvas id="webgl" width="400" height="400">
+          Please use a browser that supports canvas
+        </canvas>
+      </td>
+      <td style="width: 60%;">
+        <table>
+          <tr>
+            <td>
+              <ul id="fieldlist2">
+                <li>
+                  <input type="radio" name="axis" id="x-axis" class="k-radio" checked="checked" onclick="changeAxis()">
+                  <label class="k-radio-label" for="x-axis">X-axis</label>
+                </li>
+                <li>
+                  <input type="radio" name="axis" id="y-axis" class="k-radio" onclick="changeAxis()">
+                  <label class="k-radio-label" for="y-axis">Y-axis</label>
+                </li>
+                <li>
+                  <input type="radio" name="axis" id="z-axis" class="k-radio" onclick="changeAxis()">
+                  <label class="k-radio-label" for="z-axis">Z-axis</label>
+                </li>
+              </ul>
+            </td>
+            <td>
+              <button id="restart" class="k-primary" onclick="restart()">Restart</button>
+            </td>
+          </tr>
+        </table>
+        <ul id="fieldlist">
+          <li>
+            <label>Rotation</label>
+            <input style="width: 80%;" class="slider" id="rotSlider"/>
+          </li>
+          <li>
+            <label>Translation</label>
+            <input style="width: 80%;" class="slider" id="transSlider"/>
+          </li>
+          <li>
+            <label>Scalation</label>
+            <input style="width: 80%;" class="slider" id="scaleSlider"/>
+          </li>
+          <!--
+          <li>
+            <label>Rotation Range</label>
+            <div style="width: 80%;" id="rangeslider">
+              <input />
+              <input />
+            </div>
+          </li>
+      -->
+        </ul>
+      </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="witdh: 100%;">
+            <div id="buttons">
+            </div>
+        </td>
+    </tr>
+    <tr>
+      <td colspan="2" style="width: 100%;">
+        <div class="box">
+          <h4>Console log</h4>
+          <div class="console"></div>
+        </div>
+      </td>
+    </tr>
+  </table>
+
+  <script src="https://kendo.cdn.telerik.com/2021.2.616/js/jquery.min.js"></script>
+  <script src="https://kendo.cdn.telerik.com/2021.2.616/js/kendo.all.min.js"></script>
+  <script src="https://demos.telerik.com/kendo-ui/content/shared/js/console.js"></script>
+  <script src="lib/webgl-utils.js"> </script>
+  <script src="lib/webgl-debug.js"> </script>
+  <script src="lib/cuon-utils.js"> </script>
+  <script src="lib/cuon-matrix.js"> </script>
+  <script src="main.js"> </script>
+  <link rel="stylesheet" href="style.css">
+</body>
+</html>
