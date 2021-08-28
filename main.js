@@ -373,10 +373,6 @@ function draw(gl){
         }
     }
 
-    for (var i = 0; i < 0; i++) {
-        var n = initVertexBuffers(gl, new Float32Array([0,0,0]), )
-    }
-
     for(var i = 0; i < g_points.length; i++){
         var n = initVertexBuffers(gl, new Float32Array(g_points[i]), new Float32Array(g_colors[i]), false);
         gl.drawArrays(gl.TRIANGLE_FAN, 0, n);
