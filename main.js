@@ -52,9 +52,9 @@ function setSliderValues(aIndex) {
     var rotSlider = $("#rotSlider").data("kendoSlider");
     var transSlider = $("#transSlider").data("kendoSlider");
     var scaleSlider = $("#scaleSlider").data("kendoSlider");
-    rotSlider.value(rotValues[aIndex]);
-    transSlider.value(transValues[aIndex]);
-    scaleSlider.value(scaleValues[aIndex]);
+    rotSlider.value(rotV[index][aIndex]);
+    transSlider.value(transV[index][aIndex]);
+    scaleSlider.value(scaleV[index][aIndex]);
 }
 
 //function resetSliders
@@ -395,6 +395,9 @@ var isDrawing = false;
 var isZ = false;
 var c = [230 / 255, 100 / 255, 101 / 255];
 var zVal = 0.0;
+var rotV = [];
+var transV = [];
+var scaleV = [];
 function click(ev, gl, canvas) {
     if(event.buttons == 1){
         var rect = ev.target.getBoundingClientRect();
