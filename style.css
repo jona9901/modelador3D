@@ -28,6 +28,17 @@
     padding-bottom: 1em;
 }
 
+#fieldlist3 {
+    margin: 0 0 -2em;
+    padding: 0;
+    text-align: center;
+}
+
+#fieldlist3 > li {
+    list-style: none;
+    padding-bottom: 2em;
+}
+
 .modelButton {
     width: 70px;
     height: 70px;
