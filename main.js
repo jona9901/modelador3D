@@ -26,35 +26,27 @@ function changeAxis() {
         kendoConsole.log("X");
         axis = [1,0,0];
         axisIndex = 0;
-        setSliderValues(0);
-        translate = 0;
-        scale = 1;
     }
     if(yAxis.checked){
         kendoConsole.log("Y");
         axis = [0,1,0];
         axisIndex = 1;
-        setSliderValues(1);
-        translate = 0;
-        scale = 1;
     }
     if(zAxis.checked){
         kendoConsole.log("Z");
         axis = [0,0,1];
         axisIndex = 2;
-        setSliderValues(2);
-        translate = 0;
-        scale = 1;
     }
+    setSliderValues();
 }
 
-function setSliderValues(aIndex) {
+function setSliderValues() {
     var rotSlider = $("#rotSlider").data("kendoSlider");
     var transSlider = $("#transSlider").data("kendoSlider");
     var scaleSlider = $("#scaleSlider").data("kendoSlider");
-    rotSlider.value(rotV[index][aIndex]);
-    transSlider.value(transV[index][aIndex]);
-    scaleSlider.value(scaleV[index][aIndex]);
+    rotSlider.value(g_rot[selectedIndex][axisIndex]);
+    transSlider.value(g_trans[selectedIndex][axisIndex]);
+    scaleSlider.value(g_scale[selectedIndex][axisIndex]);
 }
 
 //function resetSliders
@@ -63,52 +55,55 @@ function restart(){
     index = 0;
     g_points = [];
     g_colors = [];
+    g_rot = [];
     kendoConsole.log("Restart");
 }
 
 function rotSliderOnSlide(e) {
-    kendoConsole.log("Slide :: new slide value is: " + e.value);
+    //kendoConsole.log("Slide :: new slide value is: " + e.value);
     angle = e.value;
-    rotValues[axisIndex] = angle;
+    //rotV[index][axisIndex] = angle;
+    g_rot[selectedIndex][axisIndex] = angle;
 }
 
 function rotSliderOnChange(e) {
-    kendoConsole.log("Change :: new value is: " + e.value);
+    //kendoConsole.log("Change :: new value is: " + e.value);
     angle = e.value;
-    rotValues[axisIndex] = angle;
+    //rotV[index][axisIndex] = angle;
+    g_rot[selectedIndex][axisIndex] = angle;
 }
 
 function transSliderOnSlide(e) {
-    kendoConsole.log("Slide :: new slide value is: " + e.value);
+    //kendoConsole.log("Slide :: new slide value is: " + e.value);
     trans = e.value;
-    transValues[axisIndex] = axis[axisIndex] * trans;
+    g_trans[selectedIndex][axisIndex] = axis[axisIndex] * trans;
 }
 
 function transSliderOnChange(e) {
-    kendoConsole.log("Change :: new value is: " + e.value);
+    //kendoConsole.log("Change :: new value is: " + e.value);
     trans = e.value;
-    transValues[axisIndex] = axis[axisIndex] * trans;
+    g_trans[selectedIndex][axisIndex] = axis[axisIndex] * trans;
 }
 
 function scaleSliderOnSlide(e) {
-    kendoConsole.log("Slide :: new slide value is: " + e.value);
+    //kendoConsole.log("Slide :: new slide value is: " + e.value);
     scale = e.value;
-    scaleValues[axisIndex] = axis[axisIndex] * scale;
+    g_scale[selectedIndex][axisIndex] = axis[axisIndex] * scale;
 }
 
 function scaleSliderOnChange(e) {
-    kendoConsole.log("Change :: new value is: " + e.value);
+    //kendoConsole.log("Change :: new value is: " + e.value);
     scale = e.value;
-    scaleValues[axisIndex] = axis[axisIndex] * scale;
+    g_scale[selectedIndex][axisIndex] = axis[axisIndex] * scale;
 }
 
 function zSliderOnSlide(e) {
-    kendoConsole.log("Slide :: new slide value is: " + e.value);
+    //kendoConsole.log("Slide :: new slide value is: " + e.value);
     zVal = e.value;
 }
 
 function zSliderOnChange(e) {
-    kendoConsole.log("Change :: new value is: " + e.value);
+    //kendoConsole.log("Change :: new value is: " + e.value);
     zVal = e.value;
 }
 
@@ -243,7 +238,7 @@ function rotateCamera(ev, gl) {
         var rect = ev.target.getBoundingClientRect();
 
         x = -((x - rect.left) - canvas.width/2)/(canvas.width/2) * 2;
-        y = -(canvas.height/2 - (y - rect.top))/(canvas.height/2) * 4;
+        y = -(canvas.height/2 - (y - rect.top))/(canvas.height/2);
 
 
 
@@ -263,8 +258,6 @@ function rotateCamera(ev, gl) {
             z = 1.5;
             isZ = false;
         }
-
-
 
         //x = 3 - x * 3;
         //var z = (canvas.height / 2) / Math.tan(Math.PI / 6);
@@ -289,13 +282,19 @@ function update(){
 
 function rightClick(ev, gl) {
     $('#buttons').append('<button onclick="selectModel(' + index + ')" id="button' + index + '" class="modelButton" type="button"><i class="fas fa-cube"></i></button>');
+    selectedIndex = index;
     index++;
+    //isIndex = true;
+    //kendoConsole.log("rotV: " + rotValues);
 }
 
 function selectModel(n) {
     kendoConsole.log('selected: ' + n);
+    selectedIndex = n;
+    setSliderValues();
 }
 
+/*
 function initVertexBuffers(gl, vertices, colors, isStatic){
     var n = vertices.length/3;
     var vertexBuffer = gl.createBuffer();
@@ -303,12 +302,17 @@ function initVertexBuffers(gl, vertices, colors, isStatic){
     if (isStatic) {
         usage = gl.STATIC_DRAW;
     } else {
+        let mIndex = index;
+        if (isSelected) {
+            mIndex = selectedIndex;
+            isSelected = false;
+        }
         usage = gl.DYNAMIC_DRAW;
         modelMatrix.setScale(scaleValues[0], scaleValues[1], scaleValues[2]);
         modelMatrix.translate(transValues[0], transValues[1], transValues[2]);
-        modelMatrix.rotate(rotValues[2], 0, 0, 1);
-        modelMatrix.rotate(rotValues[1], 0, 1, 0);
-        modelMatrix.rotate(rotValues[0], 1, 0, 0);
+        modelMatrix.rotate(rotV[mIndex][2], 0, 0, 1);
+        modelMatrix.rotate(rotV[mIndex][1], 0, 1, 0);
+        modelMatrix.rotate(rotV[mIndex][0], 1, 0, 0);
     }
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, vertices, usage);
@@ -322,6 +326,52 @@ function initVertexBuffers(gl, vertices, colors, isStatic){
     gl.enableVertexAttribArray(a_Position);
 
     // transformations
+
+    var u_ModelMatrix = gl.getUniformLocation(gl.program, 'u_ModelMatrix');
+    if(!u_ModelMatrix){ console.log('Failed to get location of u_ModelMatrix'); return;  }
+    gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    var colorBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, colors, usage);
+
+    var a_Color = gl.getAttribLocation(gl.program, 'a_Color');
+    if(a_Color < 0){
+        console.log('Failed to get location of a_Color');
+        return;
+    }
+    gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(a_Color);
+    gl.enable(gl.DEPTH_TEST);
+    gl.depthFunc(gl.LESS);
+    return n;
+}
+*/
+
+function initVertexBuffers(gl, vertices, colors, modelMatrix, isStatic, isMatrixSelected){
+    var n = vertices.length/3;
+    var vertexBuffer = gl.createBuffer();
+    if (isStatic) {
+        usage = gl.STATIC_DRAW;
+    } else {
+        usage = gl.DYNAMIC_DRAW;
+        // transformations
+        if (isMatrixSelected) {
+            modelMatrix = transformMatrix(modelMatrix, g_rot[selectedIndex], g_trans[selectedIndex], g_scale[selectedIndex]);
+        }
+    }
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, usage);
+
+    var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+    if(a_Position<0){
+        console.log('Failed to get program for a_Position');
+        return;
+    }
+    gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(a_Position);
 
     var u_ModelMatrix = gl.getUniformLocation(gl.program, 'u_ModelMatrix');
     if(!u_ModelMatrix){ console.log('Failed to get location of u_ModelMatrix'); return;  }
@@ -368,36 +418,48 @@ function draw(gl){
 
     for (var i = -0.5; i <= 0.5; i += 0.1) {
         for (var j = -0.5; j <= 0.5; j += 0.1) {
-            var n = initVertexBuffers(gl, new Float32Array([i, 0, j, -i, 0, j, i, 0, j, i, 0, -j]), new Float32Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]), true);
+            var n = initVertexBuffers(gl, new Float32Array([i, 0, j, -i, 0, j, i, 0, j, i, 0, -j]), new Float32Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]), new Matrix4, true, false);
+            //var n = initVertexBuffers(gl, new Float32Array([i, 0, j, -i, 0, j, i, 0, j, i, 0, -j]), new Float32Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]), true);
             gl.drawArrays(gl.LINES, 0, n);
         }
     }
 
     for(var i = 0; i < g_points.length; i++){
-        var n = initVertexBuffers(gl, new Float32Array(g_points[i]), new Float32Array(g_colors[i]), false);
+        var sbool = false;
+        if (i == selectedIndex) {
+            sbool = true;
+        }
+        var n = initVertexBuffers(gl, new Float32Array(g_points[i]), new Float32Array(g_colors[i]), g_modelMatrix[i], false, sbool);
+        //var n = initVertexBuffers(gl, new Float32Array(g_points[i]), new Float32Array(g_colors[i]), modelMatrix, false);
+        //var n = initVertexBuffers(gl, new Float32Array(g_points[i]), new Float32Array(g_colors[i]), false);
         gl.drawArrays(gl.TRIANGLE_FAN, 0, n);
     }
 }
 
+function transformMatrix(modelMatrix, r, t, s) {
+    modelMatrix.setScale(s[0], s[1], s[2]);
+    modelMatrix.rotate(r[0], 1, 0, 0);
+    modelMatrix.rotate(r[1], 0, 1, 0);
+    modelMatrix.rotate(r[2], 0, 0, 1);
+    modelMatrix.translate(t[0], t[1], t[2]);
+    return modelMatrix;
+}
+
 var index = 0;
 var axisIndex = 0;
-var angle = 0.0;
-var trans = 0.0;
-var scale = 1.0;
+var selectedIndex = 0;
 var aView = [0, 0, 1.5];
 var axis = [1,0,0];
-var rotValues = [0, 0, 0];
-var transValues = [0.0, 0.0, 0.0];
-var scaleValues = [1,1,1];
 var g_points = [];
 var g_colors = [];
 var isDrawing = false;
 var isZ = false;
 var c = [230 / 255, 100 / 255, 101 / 255];
 var zVal = 0.0;
-var rotV = [];
-var transV = [];
-var scaleV = [];
+var g_rot = [];
+var g_trans = [];
+var g_scale = [];
+var g_modelMatrix = [];
 function click(ev, gl, canvas) {
     if(event.buttons == 1){
         var rect = ev.target.getBoundingClientRect();
@@ -413,6 +475,11 @@ function click(ev, gl, canvas) {
         if (ev.altKey) {
             isDrawing = true;
         } else {
+            //if(isIndex) {
+                //index++;
+                //selectedIndex = index;
+                //isIndex = false;
+            //}
             var x = ev.clientX;
             var y = ev.clientY;
             x = ((x - rect.left) - canvas.width/2)/(canvas.width/2);
@@ -423,6 +490,13 @@ function click(ev, gl, canvas) {
                 g_points.push(arrayPoints);
                 var arrayColors = [];
                 g_colors.push(arrayColors);
+                g_modelMatrix.push(new Matrix4());
+                g_rot.push([0, 0, 0]);
+                g_trans.push([0.0, 0.0, 0.0]);
+                g_scale.push([1,1,1]);
+                //var rotBuff = rotValues;
+                // /rotV.push(rotBuff);
+                //console.log(rotV);
             }
 
             g_points[index].push(x);
@@ -440,7 +514,6 @@ function click(ev, gl, canvas) {
             g_colors[index].push(c[0]);
             g_colors[index].push(c[1]);
             g_colors[index].push(c[2]);
-
         }
     }
 }
