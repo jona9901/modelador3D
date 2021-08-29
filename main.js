@@ -56,6 +56,9 @@ function restart(){
     g_points = [];
     g_colors = [];
     g_rot = [];
+    g_trans = [];
+    g_scale = [];
+    g_modelMatrix = [];
     kendoConsole.log("Restart");
 }
 
@@ -199,6 +202,11 @@ function main(){
 
     $("#colorPicker").change((ev) => {
         c = hexToRgb(ev.target.value.substring(1));
+        isColorChange = true;
+        //if (selectedIndex != index) {
+        /*for (var i = 0; i < g_colors[selectedIndex].length; i++) {
+            g_colors[selectedIndex][i] = c;
+        }*/
         return;
     });
 
@@ -210,6 +218,22 @@ function main(){
     }
 
     requestAnimationFrame(update, canvas);
+}
+
+function deleteSelection() {
+    g_points.splice(selectedIndex, 1);
+    g_colors.splice(selectedIndex, 1);
+    g_rot.splice(selectedIndex, 1);
+    g_trans.splice(selectedIndex, 1);
+    g_scale.splice(selectedIndex, 1);
+    g_modelMatrix.splice(selectedIndex, 1);
+
+    index--;
+    selectedIndex = index;
+
+    let id = "button" + index;
+    var btnDel = document.getElementById(id);
+    btnDel.parentNode.removeChild(btnDel);
 }
 
 function hexToRgb(hex) {
@@ -233,15 +257,26 @@ function rotateCamera(ev, gl) {
         var y = ev.clientY;
         var z = 1.5;
 
-        var xPersp = 0.0;
+        //var xPersp = 0.0;
 
         var rect = ev.target.getBoundingClientRect();
 
-        x = -((x - rect.left) - canvas.width/2)/(canvas.width/2) * 2;
-        y = -(canvas.height/2 - (y - rect.top))/(canvas.height/2);
+        x = -((x - rect.left) - canvas.width/2)/(canvas.width/2) * 3;
+        y = -(canvas.height/2 - (y - rect.top))/(canvas.height/2) * 1.5;
 
-
-
+        if (x >= 1) {
+            z = 3 - x;
+            if (x >= 1.5) {
+                x = 1.5;
+            }
+        }
+        if (x <= -1) {
+            z = 3 + x;
+            if (x <= -1.5) {
+                x = -1.5
+            }
+        }
+        /*
         if (x >= 1) {
             xPersp = 1.5;
             z = 0;
@@ -261,8 +296,8 @@ function rotateCamera(ev, gl) {
 
         //x = 3 - x * 3;
         //var z = (canvas.height / 2) / Math.tan(Math.PI / 6);
-
-        aView[0] = xPersp;
+        */
+        aView[0] = x;
         aView[1] = y;
         aView[2] = z;
     }
@@ -416,6 +451,15 @@ function draw(gl){
 
     setViewProjMatrices(gl);
 
+    if (isColorChange) {
+        for (var i = 0; i < g_colors[selectedIndex].length; i+= 3) {
+            g_colors[selectedIndex][i] = c[0];
+            g_colors[selectedIndex][i + 1] = c[1];
+            g_colors[selectedIndex][i + 2] = c[2];
+        }
+        isColorChange = false;
+    }
+
     for (var i = -0.5; i <= 0.5; i += 0.1) {
         for (var j = -0.5; j <= 0.5; j += 0.1) {
             var n = initVertexBuffers(gl, new Float32Array([i, 0, j, -i, 0, j, i, 0, j, i, 0, -j]), new Float32Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]), new Matrix4, true, false);
@@ -437,11 +481,11 @@ function draw(gl){
 }
 
 function transformMatrix(modelMatrix, r, t, s) {
-    modelMatrix.setScale(s[0], s[1], s[2]);
+    modelMatrix.setTranslate(t[0], t[1], t[2]);
+    modelMatrix.scale(s[0], s[1], s[2]);
     modelMatrix.rotate(r[0], 1, 0, 0);
     modelMatrix.rotate(r[1], 0, 1, 0);
     modelMatrix.rotate(r[2], 0, 0, 1);
-    modelMatrix.translate(t[0], t[1], t[2]);
     return modelMatrix;
 }
 
@@ -460,6 +504,7 @@ var g_rot = [];
 var g_trans = [];
 var g_scale = [];
 var g_modelMatrix = [];
+var isColorChange = false;
 function click(ev, gl, canvas) {
     if(event.buttons == 1){
         var rect = ev.target.getBoundingClientRect();
@@ -494,7 +539,8 @@ function click(ev, gl, canvas) {
                 g_rot.push([0, 0, 0]);
                 g_trans.push([0.0, 0.0, 0.0]);
                 g_scale.push([1,1,1]);
-                //var rotBuff = rotValues;
+                //var rotBuff = rotValue
+                //g_colors[index - 1].push(0.1);
                 // /rotV.push(rotBuff);
                 //console.log(rotV);
             }
@@ -514,6 +560,7 @@ function click(ev, gl, canvas) {
             g_colors[index].push(c[0]);
             g_colors[index].push(c[1]);
             g_colors[index].push(c[2]);
+            //g_colors[index].push(c[3]);
         }
     }
 }

@@ -51,4 +51,11 @@
 .modelButton {
     width: 70px;
     height: 70px;
+    background-color: #C4B1B1;
+}
+
+.modelButton:active {
+    width: 70px;
+    height: 70px;
+    background-color: #E66465;
 }
