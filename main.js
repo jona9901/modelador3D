@@ -329,6 +329,26 @@ function selectModel(n) {
     setSliderValues();
 }
 
+function duplicateSelected() {
+    var g_points_buff = Object.assign([], g_points[selectedIndex]);
+    var g_colors_buff = Object.assign([], g_colors[selectedIndex]);
+    var g_rot_buff = Object.assign([], g_rot[selectedIndex]);
+    var g_trans_buff = Object.assign([], g_trans[selectedIndex]);
+    var g_scale_buff = Object.assign([], g_scale[selectedIndex]);
+    var g_modelMatrix_buff = new Matrix4();
+
+    g_points.push(g_points_buff);
+    g_colors.push(g_colors_buff);
+    g_rot.push(g_rot_buff);
+    g_trans.push(g_trans_buff);
+    g_scale.push(g_scale_buff);
+    g_modelMatrix.push(g_modelMatrix_buff);
+
+    $('#buttons').append('<button onclick="selectModel(' + index + ')" id="button' + index + '" class="modelButton" type="button"><i class="fas fa-cube"></i></button>');
+    selectedIndex = index;
+    index++;
+}
+
 /*
 function initVertexBuffers(gl, vertices, colors, isStatic){
     var n = vertices.length/3;
