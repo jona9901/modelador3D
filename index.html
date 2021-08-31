@@ -12,7 +12,7 @@
 </head>
 
 <body onload="main()">
-  <table>
+  <table class="table">
     <tr>
       <td>
         <canvas id="webgl" width="400" height="400">
@@ -24,28 +24,36 @@
           <tr>
             <td>
               <ul id="fieldlist2">
-                <li>
-                  <input type="radio" name="axis" id="x-axis" class="k-radio" checked="checked" onclick="changeAxis()">
-                  <label class="k-radio-label" for="x-axis">X-axis</label>
-                </li>
-                <li>
-                  <input type="radio" name="axis" id="y-axis" class="k-radio" onclick="changeAxis()">
-                  <label class="k-radio-label" for="y-axis">Y-axis</label>
-                </li>
-                <li>
-                  <input type="radio" name="axis" id="z-axis" class="k-radio" onclick="changeAxis()">
-                  <label class="k-radio-label" for="z-axis">Z-axis</label>
-                </li>
+                  <li>
+                      <input type="radio" name="axis" id="x-axis" class="radiobtn" checked="checked" onclick="changeAxis()">
+                      <label for="x-axis">X-axis</label>
+                  </li>
+                  <li>
+                    <input type="radio" name="axis" id="y-axis" class="radiobtn" onclick="changeAxis()">
+                    <label for="y-axis">Y-axis</label>
+                  </li>
+                  <li>
+                    <input type="radio" name="axis" id="z-axis" class="radiobtn" onclick="changeAxis()">
+                    <label for="z-axis">Z-axis</label>
+                  </li>
+                  <li>
+                      <input type="checkbox" id="xy-grid" checked="checked" onclick="drawGrid()">
+                      <label for="xy-axis">Vertical Grid</label>
+                  </li>
+                  <li>
+                      <input type="checkbox" id="xz-grid" checked="checked" onclick="drawGrid()">
+                      <label for="xy-axis">Horizontal Grid</label>
+                  </li>
               </ul>
             </td>
             <td>
-              <button id="restart" class="k-primary" onclick="restart()">Restart</button>
+              <button id="restart" class="btn-primary" onclick="restart()"><i class="fas fa-undo-alt"></i></button>
             </td>
             <td>
-              <button id="delete" class="k-primary" onclick="deleteSelection()">Delete</button>
+              <button id="delete" class="btn-primary" onclick="deleteSelection()"><i class="far fa-trash-alt"></i></button>
             </td>
             <td>
-              <button id="duplicate" class="k-primary" onclick="duplicateSelected()">Duplicate</button>
+              <button id="duplicate" class="btn-primary" onclick="duplicateSelected()"><i class="far fa-copy"></i></button>
             </td>
             <td>
                 <input type="color" id="colorPicker" value="#e66465" name="colorPicker">
@@ -54,7 +62,7 @@
         </table>
         <ul id="fieldlist">
           <li>
-            <label>Rotation</label>
+              <label>Rotation</label>
             <input style="width: 80%;" class="slider" id="rotSlider"/>
           </li>
           <li>
@@ -78,13 +86,9 @@
       </td>
     </tr>
     <tr>
-        <td colspan="2" style="width: 100%;">
-            <ul id="fieldlist3">
-                <li>
-                  <label>Z value</label>
-                  <input style="width: 70%;" class="slider" id="zSlider"/>
-                </li>
-            </ul>
+        <td colspan="2" style="width: 100%;" id="fieldlist3">
+            <label>Z value</label>
+            <input style="width: 70%;" class="slider" id="zSlider"/>
         </td>
     </tr>
     <tr>
@@ -102,6 +106,9 @@
       </td>
     </tr>
   </table>
+  <div class="fillers">
+
+  </div>
 
   <script src="https://kendo.cdn.telerik.com/2021.2.616/js/jquery.min.js"></script>
   <script src="https://kendo.cdn.telerik.com/2021.2.616/js/kendo.all.min.js"></script>

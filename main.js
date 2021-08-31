@@ -52,6 +52,7 @@ function setSliderValues() {
 //function resetSliders
 
 function restart(){
+    $("#buttons").html("");
     index = 0;
     g_points = [];
     g_colors = [];
@@ -60,6 +61,8 @@ function restart(){
     g_scale = [];
     g_modelMatrix = [];
     kendoConsole.log("Restart");
+    //var buttonsDiv = document.getElementById("buttons").innerHtml = "";
+    //buttonsDiv.innerHtml = "";
 }
 
 function rotSliderOnSlide(e) {
@@ -147,7 +150,7 @@ $(document).ready(function() {
         slide: transSliderOnSlide,
         min: -1.0,
         max: 1.0,
-        smallStep: .01,
+        smallStep: .02,
         largeStep: .1,
         value: 0
     });
@@ -157,7 +160,7 @@ $(document).ready(function() {
         slide: scaleSliderOnSlide,
         min: -10.0,
         max: 10.0,
-        smallStep: .1,
+        smallStep: .2,
         largeStep: 1,
         value: 1
     });
@@ -167,7 +170,7 @@ $(document).ready(function() {
         slide: zSliderOnSlide,
         min: -1,
         max: 1,
-        smallStep: .01,
+        smallStep: .02,
         largeStep: .1,
         value: 0
     });
@@ -230,6 +233,8 @@ function deleteSelection() {
 
     index--;
     selectedIndex = index;
+
+    //selectModel(index);
 
     let id = "button" + index;
     var btnDel = document.getElementById(id);
@@ -316,17 +321,26 @@ function update(){
 }
 
 function rightClick(ev, gl) {
-    $('#buttons').append('<button onclick="selectModel(' + index + ')" id="button' + index + '" class="modelButton" type="button"><i class="fas fa-cube"></i></button>');
+    createButton(index);
+    selectModel(index);
+    //lastSelected = index;
     selectedIndex = index;
     index++;
     //isIndex = true;
     //kendoConsole.log("rotV: " + rotValues);
 }
 
+function createButton(n) {
+    $('#buttons').append('<button onclick="selectModel(' + n + ')" id="button' + n + '" class="btn-primary" type="button"><i class="fas fa-cube"></i></button>');
+}
+
 function selectModel(n) {
     kendoConsole.log('selected: ' + n);
+    $("#button" + lastSelected).removeClass("modelButtonActive");
     selectedIndex = n;
     setSliderValues();
+    $("#button" + n).addClass("modelButtonActive");
+    lastSelected = n;
 }
 
 function duplicateSelected() {
@@ -344,7 +358,9 @@ function duplicateSelected() {
     g_scale.push(g_scale_buff);
     g_modelMatrix.push(g_modelMatrix_buff);
 
-    $('#buttons').append('<button onclick="selectModel(' + index + ')" id="button' + index + '" class="modelButton" type="button"><i class="fas fa-cube"></i></button>');
+    createButton(index);
+    lastSelected = selectedIndex;
+    selectModel(index);
     selectedIndex = index;
     index++;
 }
@@ -480,11 +496,23 @@ function draw(gl){
         isColorChange = false;
     }
 
-    for (var i = -0.5; i <= 0.5; i += 0.1) {
-        for (var j = -0.5; j <= 0.5; j += 0.1) {
-            var n = initVertexBuffers(gl, new Float32Array([i, 0, j, -i, 0, j, i, 0, j, i, 0, -j]), new Float32Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]), new Matrix4, true, false);
-            //var n = initVertexBuffers(gl, new Float32Array([i, 0, j, -i, 0, j, i, 0, j, i, 0, -j]), new Float32Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]), true);
-            gl.drawArrays(gl.LINES, 0, n);
+    if (isXZ) {
+        for (var i = -0.5; i <= 0.5; i += 0.1) {
+            for (var j = -0.5; j <= 0.5; j += 0.1) {
+                var n = initVertexBuffers(gl, new Float32Array([i, 0, j, -i, 0, j, i, 0, j, i, 0, -j]), new Float32Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]), new Matrix4, true, false);
+                //var n = initVertexBuffers(gl, new Float32Array([i, 0, j, -i, 0, j, i, 0, j, i, 0, -j]), new Float32Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]), true);
+                gl.drawArrays(gl.LINES, 0, n);
+            }
+        }
+    }
+
+    if (isXY) {
+        for (var i = -0.5; i <= 0.5; i += 0.1) {
+            for (var j = -0.5; j <= 0.5; j += 0.1) {
+                var n = initVertexBuffers(gl, new Float32Array([i, j, 0, -i, j, 0, i, j, 0, i, -j, 0]), new Float32Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]), new Matrix4, true, false);
+                //var n = initVertexBuffers(gl, new Float32Array([i, 0, j, -i, 0, j, i, 0, j, i, 0, -j]), new Float32Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]), true);
+                gl.drawArrays(gl.LINES, 0, n);
+            }
         }
     }
 
@@ -497,6 +525,27 @@ function draw(gl){
         //var n = initVertexBuffers(gl, new Float32Array(g_points[i]), new Float32Array(g_colors[i]), modelMatrix, false);
         //var n = initVertexBuffers(gl, new Float32Array(g_points[i]), new Float32Array(g_colors[i]), false);
         gl.drawArrays(gl.TRIANGLE_FAN, 0, n);
+        }
+}
+
+var isXY = true;
+var isXZ = true;
+
+function drawGrid() {
+    var xy = document.getElementById("xy-grid");
+    var xz = document.getElementById("xz-grid");
+
+    if(xy.checked){
+        kendoConsole.log("Vertical grid");
+        isXY = true;
+    } else {
+        isXY = false;
+    }
+    if(xz.checked){
+        kendoConsole.log("Horizontal grid");
+        isXZ = true;
+    } else {
+        isXZ = false;
     }
 }
 
@@ -525,6 +574,8 @@ var g_trans = [];
 var g_scale = [];
 var g_modelMatrix = [];
 var isColorChange = false;
+var rClickCount = 0;
+var lastSelected = 0;
 function click(ev, gl, canvas) {
     if(event.buttons == 1){
         var rect = ev.target.getBoundingClientRect();
